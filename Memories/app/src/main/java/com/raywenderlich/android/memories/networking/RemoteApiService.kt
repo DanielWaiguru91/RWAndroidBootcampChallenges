@@ -35,7 +35,12 @@
 package com.raywenderlich.android.memories.networking
 
 import com.raywenderlich.android.memories.model.response.GetImagesResponse
+import com.raywenderlich.android.memories.model.response.UploadResponse
+import okhttp3.MultipartBody
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
 
 /**
  * Api service to build Retrofit-powered API calls.
@@ -44,4 +49,12 @@ interface RemoteApiService {
 
   @GET("/images")
   suspend fun getImages(): GetImagesResponse
+
+  /**
+   * Multipart is a from of sending data where you can have multiple pieces of data to send
+   * which are part of the request
+   */
+  @Multipart
+  @POST("/files")
+  suspend fun uploadImage(@Part imageFile: MultipartBody.Part): UploadResponse
 }
