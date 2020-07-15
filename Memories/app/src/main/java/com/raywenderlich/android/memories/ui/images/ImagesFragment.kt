@@ -34,6 +34,7 @@
 
 package com.raywenderlich.android.memories.ui.images
 
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,6 +49,7 @@ import com.raywenderlich.android.memories.R
 import com.raywenderlich.android.memories.model.Image
 import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
+import com.raywenderlich.android.memories.service.DownloadService
 import com.raywenderlich.android.memories.ui.images.dialog.ImageOptionsDialogFragment
 import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.gone
@@ -102,7 +104,10 @@ class ImagesFragment : Fragment(), ImageOptionsDialogFragment.ImageOptionsListen
   }
 
   override fun onImageDownload(imageUrl: String) {
-    val constraints = Constraints.Builder()
+    val intent = Intent(activity, DownloadService::class.java)
+    intent.putExtra("image_path", imageUrl)
+    activity?.startService(intent)
+    /*val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.NOT_ROAMING)
             .setRequiresStorageNotLow(true)
             .setRequiresBatteryNotLow(true)
@@ -121,7 +126,7 @@ class ImagesFragment : Fragment(), ImageOptionsDialogFragment.ImageOptionsListen
          FileUtils.queueImagesForDownload(requireContext(), arrayOf(imageUrl))
         }
       }
-    })
+    })*/
   }
 
   private fun getAllImages() {
