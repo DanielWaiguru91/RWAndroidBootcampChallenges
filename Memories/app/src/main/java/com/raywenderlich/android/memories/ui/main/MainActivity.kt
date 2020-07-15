@@ -39,7 +39,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.raywenderlich.android.memories.R
-import com.raywenderlich.android.memories.service.DownloadService
+import com.raywenderlich.android.memories.service.DownloadJobIntentService
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   override fun onStop() {
-    val intent = Intent(this, DownloadService::class.java)
+    val intent = Intent(this, DownloadJobIntentService::class.java)
     stopService(intent)
     super.onStop()
   }

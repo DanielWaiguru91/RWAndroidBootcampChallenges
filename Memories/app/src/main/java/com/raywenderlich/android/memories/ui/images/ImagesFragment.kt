@@ -41,21 +41,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.*
 import com.raywenderlich.android.memories.App
 import com.raywenderlich.android.memories.R
 import com.raywenderlich.android.memories.model.Image
 import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
-import com.raywenderlich.android.memories.service.DownloadService
+import com.raywenderlich.android.memories.service.DownloadJobIntentService
 import com.raywenderlich.android.memories.ui.images.dialog.ImageOptionsDialogFragment
-import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.utils.gone
 import com.raywenderlich.android.memories.utils.toast
 import com.raywenderlich.android.memories.utils.visible
-import com.raywenderlich.android.memories.worker.LocalImageCheckerWorker
 import kotlinx.android.synthetic.main.fragment_images.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -104,9 +100,9 @@ class ImagesFragment : Fragment(), ImageOptionsDialogFragment.ImageOptionsListen
   }
 
   override fun onImageDownload(imageUrl: String) {
-    val intent = Intent(activity, DownloadService::class.java)
+    val intent = Intent()
     intent.putExtra("image_path", imageUrl)
-    activity?.startService(intent)
+    DownloadJobIntentService.startWork(requireContext(), intent)
     /*val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.NOT_ROAMING)
             .setRequiresStorageNotLow(true)
