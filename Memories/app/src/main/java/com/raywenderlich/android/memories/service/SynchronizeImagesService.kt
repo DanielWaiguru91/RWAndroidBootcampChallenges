@@ -62,6 +62,10 @@ class SynchronizeImagesService: Service() {
             if (result is Success){
                 val imageArray = result.data.map { it.imagePath }.toTypedArray()
                 FileUtils.queueImagesForDownload(applicationContext, imageArray)
+                stopForeground(true)
+                sendBroadcast(Intent().apply {
+                    action = ACTION_IMAGES_SYNCHRONIZED
+                })
             }
         }
     }

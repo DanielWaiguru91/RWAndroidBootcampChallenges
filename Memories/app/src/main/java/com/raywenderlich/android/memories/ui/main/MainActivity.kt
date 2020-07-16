@@ -36,10 +36,14 @@ package com.raywenderlich.android.memories.ui.main
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.raywenderlich.android.memories.R
+import com.raywenderlich.android.memories.service.ACTION_IMAGES_SYNCHRONIZED
 import com.raywenderlich.android.memories.service.DownloadJobIntentService
+import com.raywenderlich.android.memories.service.SynchronizeImagesReceiver
+import com.raywenderlich.android.memories.utils.toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -49,6 +53,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
   private val pagerAdapter by lazy { MainPagerAdapter(supportFragmentManager) }
+  private val receiver by lazy { SynchronizeImagesReceiver{
+    toast("Images synchronized")
+  } }
 
   companion object {
     fun getIntent(context: Context): Intent {
@@ -66,6 +73,13 @@ class MainActivity : AppCompatActivity() {
     initUi()
   }
 
+  override fun onStart() {
+    super.onStart()
+    registerReceiver(receiver, IntentFilter().apply {
+      addAction(ACTION_IMAGES_SYNCHRONIZED)
+    })
+  }
+
   private fun initUi() {
     tabs.setupWithViewPager(fragmentPager)
     fragmentPager.adapter = pagerAdapter
@@ -75,5 +89,6 @@ class MainActivity : AppCompatActivity() {
     val intent = Intent(this, DownloadJobIntentService::class.java)
     stopService(intent)
     super.onStop()
+    unregisterReceiver(receiver)
   }
 }
