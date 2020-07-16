@@ -44,8 +44,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -54,11 +52,8 @@ import com.raywenderlich.android.memories.R
 import com.raywenderlich.android.memories.model.Image
 import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
-import com.raywenderlich.android.memories.service.SynchronizeImageService
+import com.raywenderlich.android.memories.service.SynchronizeImagesService
 import com.raywenderlich.android.memories.utils.FileUtils
-import com.raywenderlich.android.memories.utils.toast
-import com.raywenderlich.android.memories.worker.ClearLocalStorageWorker
-import com.raywenderlich.android.memories.worker.SynchronizeImageWorker
 import com.raywenderlich.android.memories.worker.UploadImageWorker
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.coroutines.Dispatchers
@@ -105,15 +100,16 @@ class SettingsFragment : Fragment() {
             val result = remoteApi.getImages()
             if (result is Success){
               val images = result.data
-              synchronizeImages(images)
+              synchronizeImages()
             }
           }
       }
     }
   }
 
-  private fun synchronizeImages(images: List<Image>) {
-    SynchronizeImageService.startWork(requireContext(), Intent())
+  private fun synchronizeImages() {
+    val intent = Intent(requireContext(), SynchronizeImagesService::class.java)
+    activity?.startService(intent)
     /*val clearLocalStorageWorker = OneTimeWorkRequestBuilder<ClearLocalStorageWorker>()
             .build()
     val synchronizeImageWorker = OneTimeWorkRequestBuilder<SynchronizeImageWorker>()
