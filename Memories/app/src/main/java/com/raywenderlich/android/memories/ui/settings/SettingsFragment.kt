@@ -53,6 +53,8 @@ import com.raywenderlich.android.memories.model.Image
 import com.raywenderlich.android.memories.model.result.Success
 import com.raywenderlich.android.memories.networking.NetworkStatusChecker
 import com.raywenderlich.android.memories.service.SynchronizeImagesService
+import com.raywenderlich.android.memories.service.UploadImagesReceiver
+import com.raywenderlich.android.memories.service.UploadService
 import com.raywenderlich.android.memories.utils.FileUtils
 import com.raywenderlich.android.memories.worker.UploadImageWorker
 import kotlinx.android.synthetic.main.fragment_settings.*
@@ -135,11 +137,8 @@ class SettingsFragment : Fragment() {
       val fileUri = FileUtils.getImagePathFromInputStreamUri(selectedImage,
       context.contentResolver,
       context)
-      val worker = OneTimeWorkRequestBuilder<UploadImageWorker>()
-              .setInputData(workDataOf("image_path" to fileUri))
-              .build()
-      WorkManager.getInstance(context)
-              .enqueue(worker)
+      val intent = Intent().apply { putExtra("image_path", fileUri) }
+      UploadService.startWork(requireContext(), intent)
     }
   }
 }
