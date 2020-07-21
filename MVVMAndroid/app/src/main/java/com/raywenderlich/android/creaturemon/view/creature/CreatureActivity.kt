@@ -31,23 +31,28 @@
 package com.raywenderlich.android.creaturemon.view.creature
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.raywenderlich.android.creaturemon.R
 import com.raywenderlich.android.creaturemon.model.AttributeStore
+import com.raywenderlich.android.creaturemon.model.AttributeType
 import com.raywenderlich.android.creaturemon.model.AttributeValue
 import com.raywenderlich.android.creaturemon.model.Avatar
 import com.raywenderlich.android.creaturemon.view.avatars.AvatarAdapter
 import com.raywenderlich.android.creaturemon.view.avatars.AvatarBottomDialogFragment
+import com.raywenderlich.android.creaturemon.viewmodels.CreatureViewModel
 import kotlinx.android.synthetic.main.activity_creature.*
 
 
 class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
-
+  private val creatureViewModel by lazy {
+    ViewModelProviders.of(this).get(CreatureViewModel::class.java)
+  }
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_creature)
@@ -77,19 +82,19 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
   private fun configureSpinnerListeners() {
     intelligence.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
       override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // TODO: handle selection
+        creatureViewModel.attributesSelected(AttributeType.INTELLIGENCE, position)
       }
       override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
     strength.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
       override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // TODO: handle selection
+        creatureViewModel.attributesSelected(AttributeType.STRENGTH, position)
       }
       override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
     endurance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
       override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // TODO: handle selection
+        creatureViewModel.attributesSelected(AttributeType.ENDURANCE, position)
       }
       override fun onNothingSelected(parent: AdapterView<*>?) {}
     }

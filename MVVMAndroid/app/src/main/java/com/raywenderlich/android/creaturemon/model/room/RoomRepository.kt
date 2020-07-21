@@ -45,25 +45,29 @@ class RoomRepository : CreatureRepository {
 
   private class InsertAsyncTask internal constructor(private val dao: CreatureDao) : AsyncTask<Creature, Void, Void>() {
     override fun doInBackground(vararg params: Creature): Void? {
+      dao.insertCreature(params[0])
       return null
     }
   }
 
   private class DeleteAsyncTask internal constructor(private val dao: CreatureDao) : AsyncTask<Creature, Void, Void>() {
     override fun doInBackground(vararg params: Creature): Void? {
+      dao.clearCreatures(*params)
       return null
     }
   }
 
   override fun saveCreature(creature: Creature) {
-    TODO("Not yet implemented")
+    InsertAsyncTask(creatureDao).execute(creature)
   }
 
-  override fun getAllCreatures(): LiveData<List<Creature>> {
-    TODO("Not yet implemented")
-  }
+  override fun getAllCreatures(): LiveData<List<Creature>> = allCreatures
 
   override fun clearAllCreature() {
-    TODO("Not yet implemented")
+    val allCreaturesArray = allCreatures.value?.toTypedArray()
+    if (allCreaturesArray != null){
+      DeleteAsyncTask(creatureDao).execute(*allCreaturesArray)
+    }
+
   }
 }
