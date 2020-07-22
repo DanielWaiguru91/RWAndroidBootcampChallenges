@@ -38,9 +38,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.raywenderlich.android.creaturemon.R
+import com.raywenderlich.android.creaturemon.databinding.ActivityCreatureBinding
 import com.raywenderlich.android.creaturemon.model.AttributeStore
 import com.raywenderlich.android.creaturemon.model.AttributeType
 import com.raywenderlich.android.creaturemon.model.AttributeValue
@@ -55,14 +57,16 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
   private val creatureViewModel by lazy {
     ViewModelProviders.of(this).get(CreatureViewModel::class.java)
   }
+  lateinit var binding: ActivityCreatureBinding
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_creature)
+    //setContentView(R.layout.activity_creature)
+    binding = DataBindingUtil.setContentView(this, R.layout.activity_creature)
+    binding.creatureViewModel = creatureViewModel
 
     configureUI()
     configureSpinnerAdapters()
     configureSpinnerListeners()
-    configureEditText()
     configureClickListeners()
     configureLiveDataObservers()
   }
@@ -103,7 +107,7 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
     }
   }
 
-  private fun configureEditText() {
+ /* private fun configureEditText() {
     nameEditText.addTextChangedListener(object : TextWatcher {
       override fun afterTextChanged(s: Editable?) {}
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -111,7 +115,7 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
         creatureViewModel.name = s.toString()
       }
     })
-  }
+  }*/
 
   private fun configureClickListeners() {
     avatarImageView.setOnClickListener {
@@ -119,14 +123,14 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
       bottomDialogFragment.show(supportFragmentManager, "AvatarBottomDialogFragment")
     }
 
-    saveButton.setOnClickListener {
+    /*saveButton.setOnClickListener {
       if (creatureViewModel.saveCreature()){
         Toast.makeText(this, getString(R.string.creature_saved), Toast.LENGTH_SHORT).show()
       }
       else{
         Toast.makeText(this, getString(R.string.error_saving_creature), Toast.LENGTH_SHORT).show()
       }
-    }
+    }*/
   }
   private fun configureLiveDataObservers(){
     creatureViewModel.getCreatureLiveData().observe(this, Observer { creature ->
@@ -134,6 +138,16 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
         hitPoints.text = creature.hitPoints.toString()
         avatarImageView.setImageResource(creature.drawable)
         nameEditText.setText(creature.name)
+      }
+    })
+    creatureViewModel.getSavLiveData().observe(this, Observer { saved ->
+      saved?.let {
+        if (saved){
+          Toast.makeText(this, getString(R.string.creature_saved), Toast.LENGTH_SHORT).show()
+        }
+        else{
+          Toast.makeText(this, getString(R.string.error_saving_creature), Toast.LENGTH_SHORT).show()
+        }
       }
     })
   }

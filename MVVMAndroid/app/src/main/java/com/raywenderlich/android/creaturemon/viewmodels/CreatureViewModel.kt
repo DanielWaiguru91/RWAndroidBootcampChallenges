@@ -1,5 +1,6 @@
 package com.raywenderlich.android.creaturemon.viewmodels
 
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,8 +11,10 @@ class CreatureViewModel(private val generator: CreatureGenerator = CreatureGener
 private val creatureRepository: CreatureRepository = RoomRepository())
     : ViewModel() {
     private val creatureLiveData = MutableLiveData<Creature>()
+    private val saveLiveData = MutableLiveData<Boolean>()
     fun getCreatureLiveData(): LiveData<Creature> = creatureLiveData
-    var name = ""
+    fun getSavLiveData(): LiveData<Boolean> = saveLiveData
+    var name = ObservableField<String>("")
     var intelligence = 0
     var strength = 0
     var endurance = 0
@@ -20,7 +23,7 @@ private val creatureRepository: CreatureRepository = RoomRepository())
     lateinit var creature: Creature
     fun updateCreature(){
         val attributes = CreatureAttributes(intelligence, strength, endurance)
-        creature = generator.generateCreature(attributes, name, drawable)
+        creature = generator.generateCreature(attributes, name.get() ?: "", drawable)
         creatureLiveData.postValue(creature)
     }
     fun attributesSelected(attributeType: AttributeType, position: Int){
@@ -38,16 +41,20 @@ private val creatureRepository: CreatureRepository = RoomRepository())
         this.drawable = drawable
         updateCreature()
     }
-    fun saveCreature(): Boolean{
+    fun saveCreature(){
         return if (failureSavingCreature()){
             creatureRepository.saveCreature(creature)
-            true
+            saveLiveData.postValue(true)
         }
-        else false
+        else saveLiveData.postValue(false)
     }
     fun failureSavingCreature(): Boolean{
-        return intelligence != 0 && strength != 0 && endurance != 0 && name.isNotEmpty()
-                && drawable != 0
+        val name = this.name.get()
+        name?.let {
+            return intelligence != 0 && strength != 0 && endurance != 0 && name.isNotEmpty()
+                    && drawable != 0
+        }
+        return false
     }
 
 }
