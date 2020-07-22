@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.raywenderlich.android.creaturemon.model.Creature
 import com.raywenderlich.android.creaturemon.model.CreatureAttributes
 import com.raywenderlich.android.creaturemon.model.CreatureGenerator
+import com.raywenderlich.android.creaturemon.model.CreatureRepository
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -21,10 +22,12 @@ class CreatureViewModelTest {
     @Mock
     lateinit var mockGenerator: CreatureGenerator
 
+    @Mock
+    lateinit var repository: CreatureRepository
     @Before
     fun setUp(){
         MockitoAnnotations.initMocks(this)
-        creatureViewModel = CreatureViewModel(mockGenerator)
+        creatureViewModel = CreatureViewModel(mockGenerator, repository)
     }
 
     @Test
@@ -39,5 +42,23 @@ class CreatureViewModelTest {
         creatureViewModel.updateCreature()
 
         assertEquals(stubCreature, creatureViewModel.creature)
+    }
+    @Test
+    fun textFailureOnCreatureWithBlankName(){
+        creatureViewModel.intelligence = 10
+        creatureViewModel.strength = 3
+        creatureViewModel.endurance = 7
+        creatureViewModel.name = ""
+        val failureSavingCreature = creatureViewModel.failureSavingCreature()
+        assertEquals(false, failureSavingCreature)
+    }
+    @Test
+    fun testCantSaveCreatureWithoutStrength(){
+        creatureViewModel.intelligence = 10
+        creatureViewModel.strength = 0
+        creatureViewModel.endurance = 7
+        creatureViewModel.name = "Creature Without Strength"
+        val creatureWithoutStrength = creatureViewModel.failureSavingCreature()
+        assertEquals(false, creatureWithoutStrength)
     }
 }
