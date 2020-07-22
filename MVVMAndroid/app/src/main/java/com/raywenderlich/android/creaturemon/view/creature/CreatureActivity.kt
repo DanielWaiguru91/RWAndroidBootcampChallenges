@@ -37,6 +37,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.raywenderlich.android.creaturemon.R
 import com.raywenderlich.android.creaturemon.model.AttributeStore
@@ -62,12 +63,13 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
     configureSpinnerListeners()
     configureEditText()
     configureClickListeners()
+    configureLiveDataObservers()
   }
 
   private fun configureUI() {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     title = getString(R.string.add_creature)
-    // TODO: hide label
+    if (creatureViewModel.drawable != 0) hideTapLabel()
   }
 
   private fun configureSpinnerAdapters() {
@@ -105,7 +107,7 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
       override fun afterTextChanged(s: Editable?) {}
       override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
       override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        // TODO: handle text changed
+        creatureViewModel.name = s.toString()
       }
     })
   }
@@ -120,9 +122,18 @@ class CreatureActivity : AppCompatActivity(), AvatarAdapter.AvatarListener {
       // TODO: handle save button clicked
     }
   }
+  private fun configureLiveDataObservers(){
+    creatureViewModel.getCreatureLiveData().observe(this, Observer { creature ->
+      creature?.let {
+        hitPoints.text = creature.hitPoints.toString()
+        avatarImageView.setImageResource(creature.drawable)
+        nameEditText.setText(creature.name)
+      }
+    })
+  }
 
   override fun avatarClicked(avatar: Avatar) {
-    // TODO: handle avatar clicked
+    creatureViewModel.drawableSelected(avatar.drawable)
     hideTapLabel()
   }
 

@@ -43,4 +43,7 @@ dependencies {
 
   //ViewModel and LiveData
   implementation "android.arch.lifecycle:extensions:$arch_comp_version"
+  //Testing
+  implementation "org.mockito:mockito-core:2.19.0"
+  implementation "android.arch.core:core-testing:$arch_comp_version"
 }
