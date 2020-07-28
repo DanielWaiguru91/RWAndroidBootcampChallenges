@@ -8,4 +8,6 @@ Android Concepts challenges from [raywenderlich.com](https://www.raywenderlich.c
  * Kotlin Coutines
  * Dependency Injection
  * Koin
- 
+ * Work Manager
+ * Background and Foreground Services
+ * 
