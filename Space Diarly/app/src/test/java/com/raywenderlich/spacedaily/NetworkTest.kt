@@ -35,4 +35,12 @@ class NetworkTest: KoinTest {
         assertNotNull(retrofit)
         assertNotNull(baseUrl)
     }
+    @Test
+    fun `Test Moshi Instance creation` (){
+        assertNotNull(moshi)
+    }
+    @Test
+    fun `Test api Instance creation` (){
+        assertNotNull(api)
+    }
 }
