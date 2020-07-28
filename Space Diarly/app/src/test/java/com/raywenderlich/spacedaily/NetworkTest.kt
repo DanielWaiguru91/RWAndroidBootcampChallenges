@@ -3,6 +3,7 @@ package com.raywenderlich.spacedaily
 import com.raywenderlich.spacedaily.di.networkModule
 import com.raywenderlich.spacedaily.network.NASAAPIInterface
 import com.squareup.moshi.Moshi
+import okhttp3.OkHttpClient
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -17,8 +18,9 @@ import retrofit2.Retrofit
 
 class NetworkTest: KoinTest {
     private val retrofit: Retrofit by inject()
-    val api: NASAAPIInterface by inject()
-    val moshi: Moshi by inject()
+    private val api: NASAAPIInterface by inject()
+    private val moshi: Moshi by inject()
+    private val okHttpClient: OkHttpClient by inject()
     private val baseUrl : String by lazy { get(named("BASE_URL")) as String }
     @Before
     fun setup(){
@@ -42,5 +44,13 @@ class NetworkTest: KoinTest {
     @Test
     fun `Test api Instance creation` (){
         assertNotNull(api)
+    }
+    @Test
+    fun `Test OkHttpClient and interceptors` (){
+        assertNotNull(okHttpClient)
+        assert(okHttpClient.connectTimeoutMillis == 30000)
+        assert(okHttpClient.readTimeoutMillis == 30000)
+        assert(okHttpClient.writeTimeoutMillis == 30000)
+        assert(okHttpClient.interceptors.size == 1)
     }
 }
